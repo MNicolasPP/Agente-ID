@@ -33,7 +33,7 @@ def ocr_df(image_bin: np.ndarray, psm: int = 4) -> pd.DataFrame:
 
 # ---------- Labels / Layout ----------
 KNOWN_LABELS = {
-    "DOMICILIO", "CLAVE DE ELECTOR", "CLAVE ELECTOR", "CLAVE DEL ELECTOR",
+    "DOMICILIO", "CLAVE DE ELECTOR", "CLAVE ELECTOR", "CLAVE DE ELECTOR",
     "CURP", "CURV", "FECHA", "FECHA DE NACIMIENTO", "SECCION", "SECCIÓN", "VIGENCIA",
     "NOMBRE", "NOMBRES", "APELLIDO PATERNO", "APELLIDO MATERNO"
 }
@@ -158,7 +158,7 @@ def extract_direccion_desde_path(img_path: str,
     """
     Devuelve un string con la dirección. Lee debajo de 'DOMICILIO'
     (misma columna) y concatena hasta max_lines líneas, cortando ante
-    otros labels. Si no hay label, intenta heurística por palabras clave.
+    otros labels.
     """
     img_bgr = cv2.imread(img_path)
     if img_bgr is None:

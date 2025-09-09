@@ -81,7 +81,7 @@ X_RIGHT_PAD  = 420    # menos ancho hacia la derecha (evita 2023 de “AÑO DE R
 BAND_PIXELS  = 55     # franja más bajita (evita FECHA/SECCIÓN/VIGENCIA)
 Y_START_BIAS = -6     # empieza un poco MÁS ARRIBA para no cortar la parte superior de la CURP
 
-def extract_curp_line_below(path: str) -> str|None:
+def extraer_curp(path: str) -> str|None:
     img_bgr = cv2.imread(path)
     if img_bgr is None:
         raise FileNotFoundError(path)
@@ -154,5 +154,5 @@ def extract_curp_line_below(path: str) -> str|None:
 # ===== CLI opcional =====
 if __name__ == "__main__":
     img_path = sys.argv[1] if len(sys.argv) > 1 else "frente.jpg"
-    curp = extract_curp_line_below(img_path)
+    curp = extraer_curp(img_path)
     print("CURP detectada:", curp)

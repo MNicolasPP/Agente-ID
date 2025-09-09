@@ -1,4 +1,4 @@
-from .curp import extract_curp_line_below
+from .curp import extraer_curp
 from .nombres import extract_nombres_desde_path
 from .direccion import extract_direccion_desde_path
 

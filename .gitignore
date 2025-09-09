@@ -1,0 +1,42 @@
+# --- Carpetas de entorno / compilación ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
+
+# --- Virtualenv / entornos ---
+.venv/
+venv/
+env/
+ENV/
+.ipynb_checkpoints/
+
+# --- Archivos de sistema ---
+.DS_Store
+Thumbs.db
+
+# --- Archivos de logs y temporales ---
+*.log
+*.tmp
+*.swp
+
+# --- IDEs / editores ---
+.vscode/
+.idea/
+*.iml
+
+# --- Archivos de pruebas ---
+ejemplos/*
+!ejemplos/.gitkeep
+
+# --- Archivos de salida ---
+ine_datos.json
+*.cropped.jpg

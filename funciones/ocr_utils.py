@@ -37,6 +37,10 @@ def ocr_df(image_bin, psm: int = 4) -> pd.DataFrame:
         if c in df.columns: df[c] = df[c].astype(int)
     return df
 
+def ocr_raw(image_bin, psm: int = 4) -> str:
+    cfg = f"--oem 3 --psm {psm} -l spa"
+    return pytesseract.image_to_string(image_bin, config=cfg)
+
 # --------- Labels / Layout helpers ---------
 LABELS_KNOWN = {
     "APELLIDO PATERNO", "APELLIDO MATERNO",
