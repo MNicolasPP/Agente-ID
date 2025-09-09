@@ -38,8 +38,20 @@ def procesar_ine(img_path: str,
         "imagen_recortada": str(cropped_path)
     }
 
+        # --- Validación de coherencia ---
+    if not curp or len(curp) < 18 or (
+        not data["apellido_paterno"] and
+        not data["apellido_materno"] and
+        not data["nombre"]
+    ):
+        return {
+            print("Intente tomar la foto de nuevo por favor")
+        }
+
     if save_json:
-            json_path = out_dir / "ine_datos.json"
-            with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            data["json_path"] = str(json_path)
+        json_path = out_dir / "ine_datos.json"
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        data["json_path"] = str(json_path)
+
+    return data
