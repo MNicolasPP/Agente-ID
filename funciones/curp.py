@@ -11,8 +11,7 @@ DEBUG_SAVE_WORDS_CSV = False
 # Si tu Tesseract está en otra ruta, cámbiala:
 # pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe' 
-pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 # ===== Utilidades =====
 def strip_accents(s): return ''.join(c for c in unicodedata.normalize('NFD', str(s)) if unicodedata.category(c) != 'Mn')

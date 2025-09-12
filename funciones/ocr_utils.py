@@ -4,8 +4,8 @@ import pytesseract
 import funciones.ocr_env
 
 # Ajusta si tu Tesseract está en otra ruta:
-pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe'
 # pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'                                           # Linux / Docker     /
 
 # --------- Texto ---------

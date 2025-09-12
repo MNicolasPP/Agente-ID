@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  python-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+
+  proxy:
+    build:
+      context: .
+      dockerfile: my-tool/Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4000
+      PYTHON_URL: http://python-service:3000
+    depends_on:
+      - python-service
