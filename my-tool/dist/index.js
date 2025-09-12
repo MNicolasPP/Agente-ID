@@ -1,204 +1,155 @@
 "use strict";
-/**
- * MyTool - Proxy tool that connects to Python Identification Extactor Agent
- *
- * This AI Spine tool provides basic text processing capabilities with configurable
- * parameters and robust input validation. It demonstrates the fundamental patterns
- * for building AI Spine compatible tools.
- *
- * Generated on 2025-09-11 using create-ai-spine-tool v1.0.0
- * Template: , Language: typescript
- *
- * @fileoverview Main tool implementation for my-tool
- * @author AI Spine Developer
- * @since 1.0.0
- */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-// Load environment variables from .env file
+exports.idProxyTool = void 0;
+// --- Express endpoint para recibir JSON por POST ---
+// --- IA-SPINE-TOOLS tool server ---
 require("dotenv/config");
 const tools_1 = require("@ai-spine/tools");
-/**
- * Main tool instance created using the AI Spine createTool factory.
- * This tool implements the universal AI Spine contract, making it compatible
- * with all AI Spine platforms and runtimes.
- */
-const myToolTool = (0, tools_1.createTool)({
-    /**
-     * Tool metadata provides information about the tool's identity,
-     * capabilities, and usage. This information is used for documentation
-     * generation, tool discovery, and runtime introspection.
-     */
+const fs = __importStar(require("fs"));
+// Utilidad para convertir una imagen a base64 desde disco
+function getImageBase64(imagePath) {
+    try {
+        return fs.readFileSync(imagePath, { encoding: 'base64' });
+    }
+    catch (err) {
+        console.error('Error leyendo la imagen:', err);
+        return '';
+    }
+}
+exports.idProxyTool = (0, tools_1.createTool)({
     metadata: {
-        name: 'my-tool',
+        name: 'identification-proxy-tool',
+        description: 'Proxy tool that connects to Python Identification Extractor Agent',
         version: '1.0.0',
-        description: 'Proxy tool that connects to Python Identification Extactor Agent',
-        capabilities: ['text-processing'],
+        capabilities: ['id-extraction'],
         author: 'Your Name',
         license: 'MIT',
     },
-    /**
-     * Schema definition describes the structure and validation rules for
-     * both input data and configuration. The AI Spine framework uses this
-     * schema to automatically validate inputs, generate documentation,
-     * and provide type safety.
-     */
     schema: {
-        /**
-         * Input schema defines the fields that users can provide when
-         * executing this tool. Each field includes validation rules,
-         * descriptions, and default values.
-         */
         input: {
-            message: (0, tools_1.stringField)({
+            image: (0, tools_1.stringField)({
                 required: true,
-                description: 'The message to process',
-                minLength: 1,
-                maxLength: 1000,
+                description: 'Image file path or base64 string. Can be a local path or a Buffer.',
             }),
-            count: (0, tools_1.numberField)({
-                required: false,
-                description: 'Number of times to repeat the message',
-                min: 1,
-                max: 10,
-                default: 1,
-            }),
-            uppercase: (0, tools_1.booleanField)({
-                required: false,
-                description: 'Whether to convert message to uppercase',
-                default: false,
+            out_json: (0, tools_1.stringField)({
+                required: true,
+                description: 'Optional output JSON filename',
+                default: 'ine_datos.json',
             }),
         },
-        /**
-         * Configuration schema defines settings that can be provided via
-         * environment variables or configuration files. These are typically
-         * used for API keys, service endpoints, and operational parameters.
-         */
         config: {
-            api_key: (0, tools_1.apiKeyField)({
+            python_url: {
+                type: 'string',
+                description: 'URL of the Python Identification Extractor Agent',
                 required: false,
-                description: 'Optional API key for external services',
-            }),
-            default_count: {
-                type: 'number',
-                required: false,
-                description: 'Default count when not specified in input',
-                default: 1,
+                default: 'http://127.0.0.1:3000'
             },
         },
     },
-    /**
-     * The execute function contains the main business logic of the tool.
-     * It receives validated input data, configuration, and execution context,
-     * then performs the requested operation and returns structured results.
-     *
-     * @param input - Validated input data matching the input schema
-     * @param config - Configuration settings from environment/config files
-     * @param context - Execution context with metadata and tracking information
-     * @returns Promise resolving to structured execution results
-     */
-    async execute(input, config, context) {
-        console.log(`Executing my-tool tool with execution ID: ${context.executionId}`);
-        try {
-            // Get the count from input or config default
-            // This demonstrates how to merge input parameters with configuration defaults
-            const count = input.count ?? config.default_count ?? 1;
-            // Process the message according to the specified transformations
-            let processedMessage = input.message;
-            if (input.uppercase) {
-                processedMessage = processedMessage.toUpperCase();
+    async execute(input, config) {
+        const url = `${config.python_url}/execute`;
+        let imageBase64 = '';
+        if (Buffer.isBuffer(input.image)) {
+            imageBase64 = input.image.toString('base64');
+        }
+        else if (typeof input.image === 'string') {
+            if (fs.existsSync(input.image)) {
+                imageBase64 = getImageBase64(input.image);
             }
-            // Repeat the message according to the count parameter
-            const result = Array(count).fill(processedMessage).join(' ');
-            // Simulate some processing time (remove this in real implementations)
-            await new Promise(resolve => setTimeout(resolve, 100));
-            // Return structured results following AI Spine conventions
-            // The response includes the processed data, metadata, and execution information
+            else if (/^[A-Za-z0-9+/=]+$/.test(input.image.trim())) {
+                // Ya es base64
+                imageBase64 = input.image.trim();
+            }
+            else {
+                throw new Error('Input validation failed: image debe ser una ruta válida, un Buffer o un string base64');
+            }
+        }
+        else {
+            throw new Error('Input validation failed: image debe ser una ruta válida, un Buffer o un string base64');
+        }
+        if (!imageBase64) {
+            throw new Error('No se pudo convertir la imagen a base64');
+        }
+        const payload = {
+            image_base64: imageBase64,
+        };
+        console.log('Payload enviado al servicio Python:', payload);
+        if (input.out_json) {
+            payload.out_json = input.out_json;
+        }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
             return {
-                status: 'success',
-                data: {
-                    processed_message: result,
-                    original_message: input.message,
-                    transformations: {
-                        uppercase: input.uppercase || false,
-                        count: count,
-                    },
-                    metadata: {
-                        execution_id: context.executionId,
-                        timestamp: context.timestamp.toISOString(),
-                        tool_version: '1.0.0',
-                    },
-                },
+                status: 'error',
+                success: false,
+                output: null,
+                error: {
+                    code: 'server_error',
+                    message: `Error from Python Identification Extractor Agent: ${response.statusText}`,
+                    type: 'server_error',
+                    httpStatusCode: response.status
+                }
             };
         }
-        catch (error) {
-            console.error('Error processing message:', error);
-            // Always provide meaningful error messages to help users troubleshoot issues
-            throw new Error(`Failed to process message: ${error instanceof Error ? error.message : String(error)}`);
-        }
-    },
-});
-/**
- * Main entry point that starts the tool server with configurable options.
- * The server exposes REST endpoints that comply with the AI Spine universal contract:
- * - GET /health - Health check and tool metadata
- * - POST /execute - Execute the tool with input data
- * - GET /schema - Tool schema and documentation
- *
- * Configuration is loaded from environment variables, allowing for flexible
- * deployment across different environments.
- */
-async function main() {
-    try {
-        await myToolTool.start({
-            // Server configuration from environment variables with sensible defaults
-            port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
-            host: process.env.HOST || '0.0.0.0',
-            // Development features for easier debugging and testing
-            development: {
-                requestLogging: process.env.NODE_ENV === 'development'
-            },
-            // Security configuration for production deployments
-            security: {
-                requireAuth: process.env.API_KEY_AUTH === 'true',
-                ...(process.env.VALID_API_KEYS && { apiKeys: process.env.VALID_API_KEYS.split(',') }),
-            },
-        });
-        console.log(`🚀 MyTool tool server started successfully`);
-        console.log(`📡 Listening on port ${process.env.PORT || 3000}`);
-        console.log(`🔗 Health check: http://localhost:${process.env.PORT || 3000}/health`);
+        const result = await response.json();
+        return {
+            status: result.error ? 'error' : 'success',
+            success: !result.error,
+            output: result,
+            error: result.error
+                ? {
+                    code: 'execution_error',
+                    message: result.error,
+                    type: 'execution_error'
+                }
+                : undefined
+        };
     }
-    catch (error) {
-        console.error('Failed to start tool server:', error);
-        process.exit(1);
-    }
-}
-/**
- * Graceful shutdown handlers ensure the tool server stops cleanly when
- * receiving termination signals. This is important for:
- * - Completing ongoing requests
- * - Cleaning up resources
- * - Proper logging and monitoring
- * - Container orchestration compatibility
- */
-// Handle SIGINT (Ctrl+C) for graceful shutdown
-process.on('SIGINT', async () => {
-    console.log('\n🔄 Received SIGINT, shutting down gracefully...');
-    await myToolTool.stop();
-    process.exit(0);
 });
-// Handle SIGTERM (container/process manager termination) for graceful shutdown
-process.on('SIGTERM', async () => {
-    console.log('🔄 Received SIGTERM, shutting down gracefully...');
-    await myToolTool.stop();
-    process.exit(0);
-});
-// Start the server if this file is run directly (not when imported as a module)
+// Iniciar el servidor solo si este archivo es el módulo principal
 if (require.main === module) {
-    main();
+    exports.idProxyTool.start({
+        port: process.env.PORT ? parseInt(process.env.PORT) : 4000,
+        host: process.env.HOST || '0.0.0.0',
+    });
 }
-/**
- * Export the tool instance for use in tests, other modules, or programmatic usage.
- * This allows the tool to be imported and used without starting the HTTP server.
- */
-exports.default = myToolTool;
 //# sourceMappingURL=index.js.map

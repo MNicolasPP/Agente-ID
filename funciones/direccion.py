@@ -1,10 +1,10 @@
 # funciones/direccion.py
 import re, cv2, pytesseract, unicodedata, numpy as np, pandas as pd
 from pytesseract import Output
+import funciones.ocr_env
 
 # Ajusta si tu Tesseract está en otra ruta
-# pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract' # macOS Homebrew
-pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe' # Windows
+pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract' # macOS Homebrew
 # pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 # ---------- Helpers de texto ----------

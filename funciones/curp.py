@@ -2,6 +2,7 @@
 import sys, re, cv2, pytesseract, unicodedata, numpy as np, pandas as pd
 from pathlib import Path
 from pytesseract import Output
+import funciones.ocr_env
 
 # Debug switches
 DEBUG_SAVE_ROI = False
@@ -9,7 +10,8 @@ DEBUG_SAVE_WORDS_CSV = False
 
 # Si tu Tesseract está en otra ruta, cámbiala:
 # pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
-pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe' 
+pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
 # pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 # ===== Utilidades =====
