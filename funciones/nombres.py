@@ -4,8 +4,8 @@ from pytesseract import Output
 
 # (opcional) ajusta la ruta si tu Tesseract está en otro lugar
 # pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
-# pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe'
-pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = r'\Program Files\Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 # ---------- helpers de texto ----------
 def strip_accents(s: str) -> str:
